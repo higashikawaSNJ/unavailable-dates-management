@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受付不可日時管理</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- FullCalendar CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.2/main.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            border-top-left-radius: 0.25rem;
+            border-top-right-radius: 0.25rem;
+            color: #495057;
+        }
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>受付不可日時管理</h1>
+        
+        <!-- タブメニュー -->
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#date-list">受付不可日時一覧</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#add-date">新規登録</a>
+            </li>
+        </ul>
+        
+        <!-- タブコンテンツ -->
+        <div class="tab-content">
+            <!-- 受付不可日時一覧 -->
+            <div id="date-list" class="tab-pane fade show active">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>受付不可日時一覧</h5>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#calendarModal">
+                                    <i class="fa fa-calendar"></i> カレンダー表示
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- 検索フィルター -->
+                        <form class="mb-4" method="get">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>期間</label>
+                                        <div class="input-group">
+                                            <input type="date" class="form-control" name="date_from">
+                                            <div class="input-group-append input-group-prepend">
+                                                <span class="input-group-text">～</span>
+                                            </div>
+                                            <input type="date" class="form-control" name="date_to">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>種別</label>
+                                        <select class="form-control" name="type">
+                                            <option value="">すべて</option>
+                                            <option value="1">終日</option>
+                                            <option value="2">時間指定</option>
+                                            <option value="3">曜日指定</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>ステータス</label>
+                                        <select class="form-control" name="status">
+                                            <option value="">すべて</option>
+                                            <option value="1">有効</option>
+                                            <option value="0">無効</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <button type="submit" class="btn btn-secondary btn-block">検索</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <!-- 受付不可日時リスト -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>種別</th>
+                                        <th>日付/曜日</th>
+                                        <th>時間</th>
+                                        <th>説明</th>
+                                        <th>ステータス</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>終日</td>
+                                        <td>2025-03-20</td>
+                                        <td>-</td>
+                                        <td>春分の日</td>
+                                        <td><span class="badge badge-success">有効</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">編集</button>
+                                            <button class="btn btn-sm btn-danger">削除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>時間指定</td>
+                                        <td>2025-03-15</td>
+                                        <td>13:00～17:00</td>
+                                        <td>社内会議</td>
+                                        <td><span class="badge badge-success">有効</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">編集</button>
+                                            <button class="btn btn-sm btn-danger">削除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>曜日指定</td>
+                                        <td>毎週土曜日</td>
+                                        <td>終日</td>
+                                        <td>休業日</td>
+                                        <td><span class="badge badge-success">有効</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">編集</button>
+                                            <button class="btn btn-sm btn-danger">削除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>曜日指定</td>
+                                        <td>毎週日曜日</td>
+                                        <td>終日</td>
+                                        <td>休業日</td>
+                                        <td><span class="badge badge-success">有効</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">編集</button>
+                                            <button class="btn btn-sm btn-danger">削除</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>終日</td>
+                                        <td>2025-04-29 ～ 2025-05-06</td>
+                                        <td>-</td>
+                                        <td>ゴールデンウィーク</td>
+                                        <td><span class="badge badge-success">有効</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info">編集</button>
+                                            <button class="btn btn-sm btn-danger">削除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- ページネーション -->
+                        <nav>
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">前へ</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">次へ</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新規登録フォーム -->
+            <div id="add-date" class="tab-pane fade">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">受付不可日時の新規登録</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="unavailableForm">
+                            <!-- 種別選択 -->
+                            <div class="form-group">
+                                <label>種別 <span class="text-danger">*</span></label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="type" id="type1" value="1" checked>
+                                    <label class="form-check-label" for="type1">
+                                        終日指定（特定の日付を丸一日受付不可にする）
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="type" id="type2" value="2">
+                                    <label class="form-check-label" for="type2">
+                                        時間指定（特定の日付の特定時間を受付不可にする）
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="type" id="type3" value="3">
+                                    <label class="form-check-label" for="type3">
+                                        曜日指定（特定の曜日を受付不可にする）
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <!-- 日付指定（種別1,2用） -->
+                            <div class="form-group date-select">
+                                <label>日付 <span class="text-danger">*</span></label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="date" class="form-control" name="start_date">
+                                    </div>
+                                    <div class="col-md-1 text-center pt-2">
+                                        ～
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="date" class="form-control" name="end_date">
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted">期間指定する場合は両方入力、単日の場合は開始日のみ入力してください</small>
+                            </div>
+                            
+                            <!-- 曜日指定（種別3用） -->
+                            <div class="form-group weekday-select" style="display:none;">
+                                <label>曜日 <span class="text-danger">*</span></label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="mon" value="1">
+                                        <label class="form-check-label" for="mon">月</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="tue" value="2">
+                                        <label class="form-check-label" for="tue">火</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="wed" value="3">
+                                        <label class="form-check-label" for="wed">水</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="thu" value="4">
+                                        <label class="form-check-label" for="thu">木</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="fri" value="5">
+                                        <label class="form-check-label" for="fri">金</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="sat" value="6">
+                                        <label class="form-check-label text-primary font-weight-bold" for="sat">土</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" name="weekday[]" id="sun" value="0">
+                                        <label class="form-check-label text-danger font-weight-bold" for="sun">日</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 時間指定（種別2用） -->
+                            <div class="form-group time-select" style="display:none;">
+                                <label>時間 <span class="text-danger">*</span></label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="time" class="form-control" name="start_time">
+                                    </div>
+                                    <div class="col-md-1 text-center pt-2">
+                                        ～
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="time" class="form-control" name="end_time">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <!-- 説明 -->
+                            <div class="form-group">
+                                <label>説明・理由</label>
+                                <input type="text" class="form-control" name="description" placeholder="例: 祝日、社内会議など">
+                            </div>
+                            
+                            <!-- ステータス -->
+                            <div class="form-group">
+                                <label>ステータス</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="status1" value="1" checked>
+                                    <label class="form-check-label" for="status1">
+                                        有効
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="status0" value="0">
+                                    <label class="form-check-label" for="status0">
+                                        無効
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-save"></i> 登録する
+                                </button>
+                                <button type="reset" class="btn btn-secondary ml-2">
+                                    <i class="fa fa-undo"></i> リセット
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- カレンダーモーダル -->
+    <div class="modal fade" id="calendarModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">受付不可日時カレンダー</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="calendar"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery, Popper.js, Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <!-- FullCalendar JS -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.2/main.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.2/locales/ja.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.15/index.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.15/index.global.min.js"></script>
+    
+
+    <script>
+        // グローバル変数
+        var base_url = '/';
+        
+        $(document).ready(function() {
+            // フォームの種別によって表示/非表示を切り替え
+            $('input[name="type"]').change(function() {
+                var type = parseInt($(this).val());
+                
+                // いったんすべて非表示
+                $('.date-select, .time-select, .weekday-select').hide();
+                
+                if (type === 1) {
+                    // 終日の場合
+                    $('.date-select').show();
+                } else if (type === 2) {
+                    // 時間指定の場合
+                    $('.date-select').show();
+                    $('.time-select').show();
+                } else if (type === 3) {
+                    // 曜日指定の場合
+                    $('.weekday-select').show();
+                }
+            });
+            
+            // フォーム送信前のバリデーション
+            $('#unavailableForm').submit(function(e) {
+                var type = parseInt($('input[name="type"]:checked').val());
+                var valid = true;
+                var errorMessage = '';
+                
+                if (type === 1 || type === 2) {
+                    // 日付のバリデーション
+                    if ($('input[name="start_date"]').val() === '') {
+                        errorMessage += '・日付を入力してください\n';
+                        valid = false;
+                    }
+                    
+                    // 終了日が開始日より前の場合
+                    var startDate = new Date($('input[name="start_date"]').val());
+                    var endDate = new Date($('input[name="end_date"]').val());
+                    if ($('input[name="end_date"]').val() !== '' && endDate < startDate) {
+                        errorMessage += '・終了日は開始日以降の日付を入力してください\n';
+                        valid = false;
+                    }
+                }
+                
+                if (type === 2) {
+                    // 時間のバリデーション
+                    if ($('input[name="start_time"]').val() === '') {
+                        errorMessage += '・開始時間を入力してください\n';
+                        valid = false;
+                    }
+                    
+                    if ($('input[name="end_time"]').val() === '') {
+                        errorMessage += '・終了時間を入力してください\n';
+                        valid = false;
+                    }
+                    
+                    // 終了時間が開始時間より前の場合
+                    var startTime = $('input[name="start_time"]').val();
+                    var endTime = $('input[name="end_time"]').val();
+                    if (startTime >= endTime) {
+                        errorMessage += '・終了時間は開始時間より後を入力してください\n';
+                        valid = false;
+                    }
+                }
+                
+                if (type === 3) {
+                    // 曜日のバリデーション
+                    if (!$('input[name="weekday[]"]:checked').length) {
+                        errorMessage += '・曜日を選択してください\n';
+                        valid = false;
+                    }
+                }
+                
+                if (!valid) {
+                    alert('入力内容に問題があります：\n' + errorMessage);
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // デモ用にアラートを表示して送信をキャンセル
+                alert('フォームバリデーション成功: 実際の環境では登録処理が実行されます');
+                e.preventDefault();
+                return false;
+            });
+            
+            // カレンダー初期化（FullCalendarを使用）
+            if ($('#calendar').length) {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'ja',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek'
+                    },
+                    // デモ用にイベントを直接定義
+                    events: [
+                        {
+                            id: 1,
+                            title: '春分の日',
+                            start: '2025-03-20',
+                            allDay: true,
+                            color: '#dc3545'
+                        },
+                        {
+                            id: 2,
+                            title: '社内会議',
+                            start: '2025-03-15T13:00:00',
+                            end: '2025-03-15T17:00:00',
+                            allDay: false,
+                            color: '#fd7e14'
+                        },
+                        {
+                            id: 3,
+                            title: '休業日',
+                            start: '2025-03-15',
+                            allDay: true,
+                            color: '#6f42c1',
+                            daysOfWeek: [6]
+                        },
+                        {
+                            id: 4,
+                            title: '休業日',
+                            start: '2025-03-16',
+                            allDay: true,
+                            color: '#6f42c1',
+                            daysOfWeek: [0]
+                        },
+                        {
+                            id: 5,
+                            title: 'ゴールデンウィーク',
+                            start: '2025-04-29',
+                            end: '2025-05-07',
+                            allDay: true,
+                            color: '#dc3545'
+                        }
+                    ],
+                    eventClick: function(info) {
+                        // イベントクリック時の処理
+                        alert('イベント「' + info.event.title + '」がクリックされました。\n実際の環境では編集画面が開きます。');
+                    },
+                    dayMaxEvents: true, // 日ごとの最大表示数を設定
+                    height: 500
+                });
+                
+                calendar.render();
+                
+                // モーダルが表示されたときにカレンダーをレンダリングし直す
+                $('#calendarModal').on('shown.bs.modal', function () {
+                    calendar.render();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
